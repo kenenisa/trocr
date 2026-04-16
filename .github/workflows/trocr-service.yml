@@ -4,8 +4,7 @@ on:
   push:
     branches: ["main"]
     paths:
-      - "trocr-service/**"
-      - ".github/workflows/trocr-service.yml"
+      - "**"
   workflow_dispatch:
 
 env:
@@ -40,8 +39,8 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          context: ./trocr-service
-          file: ./trocr-service/Dockerfile
+          context: .
+          file: ./Dockerfile
           push: true
           tags: |
             ${{ env.IMAGE_NAME }}:${{ steps.meta.outputs.image_tag }}
