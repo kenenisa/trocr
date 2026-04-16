@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trocr-service
+  namespace: default
+  labels:
+    app: trocr-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trocr-service
+  template:
+    metadata:
+      labels:
+        app: trocr-service
+    spec:
+      containers:
+        - name: trocr-service
+          image: ghcr.io/REPLACE_WITH_OWNER/trocr-service:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: TROCR_MODEL_NAME
+              value: "microsoft/trocr-small-printed"
+            - name: MAX_UPLOAD_BYTES
+              value: "10485760"
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "2Gi"
+            limits:
+              cpu: "2"
+              memory: "4Gi"
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            timeoutSeconds: 3
+            failureThreshold: 3
